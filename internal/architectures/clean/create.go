@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/K31NER/gobootx/internal/boot"
+	"github.com/K31NER/gobootx/internal/docker"
 )
 
 type CleanBoot struct{}
@@ -13,7 +14,7 @@ func (c CleanBoot) Name() string {
 	return "Clean Architecture"
 }
 
-func (c CleanBoot) Run(basePath string) error {
+func (c CleanBoot) Run(basePath string, config boot.BootConfig) error {
 
 	// Definimos las carpetas que vamos a crear
 	paths := []string{
@@ -34,6 +35,25 @@ func (c CleanBoot) Run(basePath string) error {
 		// Validamos si se puede crear
 		if err := os.MkdirAll(fullPath, 0755);err != nil{
 			return err
+		}
+	}
+    
+	// Creamos docker file si aplica
+	if config.WithDocker { 
+		dockerContent := "" // Iniciamos la variable vacia
+
+		// Evaluamos el lenguaje
+		switch config.Language {
+		case "Go":
+			dockerContent = docker.GoDockerfile
+		case "Python":
+			dockerContent = docker.FastapiDockerfile
+		}
+        
+		// Creamos el dockerfile
+		if dockerContent != "" {
+			dockerPath := filepath.Join(basePath, "src/Dockerfile")
+			return docker.CreateDockerfile(dockerPath, dockerContent)
 		}
 	}
 
