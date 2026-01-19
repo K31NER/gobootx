@@ -22,6 +22,7 @@ func (c CleanBoot) Run(basePath string) error {
 		"src/use_case",
 		"src/infrastructure",
 		"src/api",
+		"src/config",
 	}
     
 	// Recorremos las carpetas
@@ -31,8 +32,7 @@ func (c CleanBoot) Run(basePath string) error {
 		fullPath := filepath.Join(basePath, path)
 
 		// Validamos si se puede crear
-		if err := os.MkdirAll(fullPath, 0755);
-		err != nil{
+		if err := os.MkdirAll(fullPath, 0755);err != nil{
 			return err
 		}
 	}
@@ -41,5 +41,5 @@ func (c CleanBoot) Run(basePath string) error {
 }
 
 func init(){
-	boot.Register(CleanBoot{})
+	boot.Register("1", CleanBoot{})
 }

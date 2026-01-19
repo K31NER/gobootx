@@ -1,7 +1,9 @@
 package tui
 
 import (
+	"fmt"
 	"os"
+	"sort"
 
 	"github.com/K31NER/gobootx/internal/boot"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -50,16 +52,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case tea.KeyEnter:
 			val := m.textInput.Value()
-			switch val {
-			case "1":
-				if len(boot.Schemas) > 0 {
-					wd, _ := os.Getwd()
-					boot.Schemas[0].Run(wd)
-					m.ExitMsg = "✅ Arquitectura Clean creada con éxito!"
-				}
-				return m, tea.Quit
-			case "q":
+
+			if val == "q" {
 				m.ExitMsg = "Saliendo..."
+				return m, tea.Quit
+			}
+            
+			// Obtenemos la opcion en base al numero de esta
+			if schema, ok := boot.Schemas[val]; ok {
+				wd, _ := os.Getwd()
+				schema.Run(wd)
+				m.ExitMsg = "✅ Arquitectura " + schema.Name() + " creada con éxito!"
 				return m, tea.Quit
 			}
 		}
@@ -97,14 +100,28 @@ func (m Model) View() string {
 	}
 
 	currentDir, _ := os.Getwd()
+    
+	// Sacamos las arquitecturas disponibles
+	var keys []string
+	for k := range boot.Schemas {
+		keys = append(keys, k)
+	}
 
-	menu := `
-	Opciones:
-	
-	[1] Crear estructura Clean Architecture
-	[q] Salir
-	`
+	// ordenamos
+	sort.Strings(keys)
+    
+	// iniciamos el menu
+	menu := "\n\tOpciones:\n\n"
 
+	// Vamos agregando las opciones
+	for _, k := range keys {
+		menu += fmt.Sprintf("\t[%s] Crear estructura %s\n", k, boot.Schemas[k].Name())
+	}
+
+	// Definimos el de salida
+	menu += "\t[q] Salir\n"
+    
+	// Renderizamos la terminal con los estilos
 	return style.Render(title) + "\n" + dirStyle.Render("Path: "+currentDir) + "\n" + textStyle.Render(menu) + "\n\n" + m.textInput.View()
 }
 
