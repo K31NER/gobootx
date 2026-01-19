@@ -4,50 +4,107 @@ import (
 	"os"
 
 	"github.com/K31NER/gobootx/internal/boot"
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 
-type model struct {
-	cursor int
+type Model struct {
+	textInput textinput.Model
+	cursor    int
+	width     int
+	height    int
+	ExitMsg   string
 }
 
-func InitialModel() model {
-	return model{}
+func InitialModel() Model {
+	ti := textinput.New()
+	ti.Placeholder = "Opción"
+	ti.Focus()
+	ti.CharLimit = 156
+	ti.Width = 20
+
+	return Model{
+		textInput: ti,
+	}
 }
 
-func (m model) Init() tea.Cmd{
-	return  nil
+func (m Model) Init() tea.Cmd {
+	return textinput.Blink
 }
 
 // Captura los casos
-func (m model) Update(msg tea.Msg)(tea.Model, tea.Cmd){
-	switch msg := msg.(type){
-	case tea.KeyMsg:
-		switch msg.String(){
-		case "1":
-			if len(boot.Schemas) > 0 {
-				wd, _ := os.Getwd()
-				boot.Schemas[0].Run(wd)
-			}
-			return  m, tea.Quit
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
 
-		case "q" , "ctrl+c":
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.width = msg.Width
+		m.height = msg.Height
+
+	case tea.KeyMsg:
+		switch msg.Type {
+		case tea.KeyCtrlC, tea.KeyEsc:
+			m.ExitMsg = "Saliendo..."
 			return m, tea.Quit
+		case tea.KeyEnter:
+			val := m.textInput.Value()
+			switch val {
+			case "1":
+				if len(boot.Schemas) > 0 {
+					wd, _ := os.Getwd()
+					boot.Schemas[0].Run(wd)
+					m.ExitMsg = "✅ Arquitectura Clean creada con éxito!"
+				}
+				return m, tea.Quit
+			case "q":
+				m.ExitMsg = "Saliendo..."
+				return m, tea.Quit
+			}
 		}
-		
 	}
 
-	return m,nil
+	m.textInput, cmd = m.textInput.Update(msg)
+	return m, cmd
 }
 
 // Iniciamos la TUI
-func (m model) View() string {
-	return `
-	GoBootX
+func (m Model) View() string {
+	title := `
+     ██████╗  ██████╗ ██████╗  ██████╗  ██████╗ ████████╗██╗  ██╗
+    ██╔════╝ ██╔═══██╗██╔══██╗██╔═══██╗██╔═══██╗╚══██╔══╝╚██╗██╔╝
+    ██║  ███╗██║   ██║██████╔╝██║   ██║██║   ██║   ██║    ╚███╔╝ 
+    ██║   ██║██║   ██║██╔══██╗██║   ██║██║   ██║   ██║    ██╔██╗ 
+    ╚██████╔╝╚██████╔╝██████╔╝╚██████╔╝╚██████╔╝   ██║   ██╔╝ ██╗
+     ╚═════╝  ╚═════╝ ╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝`
 
-	[1] Crear structura Clean Architecture
+	style := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#87CEEB")).
+		Align(lipgloss.Center)
+
+	dirStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#FFD700")).
+		Align(lipgloss.Center)
+
+	textStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#FAFAFA")).
+		Align(lipgloss.Left)
+
+	if m.width > 0 {
+		style = style.Width(m.width)
+		dirStyle = dirStyle.Width(m.width)
+	}
+
+	currentDir, _ := os.Getwd()
+
+	menu := `
+	Opciones:
+	
+	[1] Crear estructura Clean Architecture
 	[q] Salir
 	`
+
+	return style.Render(title) + "\n" + dirStyle.Render("Path: "+currentDir) + "\n" + textStyle.Render(menu) + "\n\n" + m.textInput.View()
 }
 
