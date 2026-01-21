@@ -1,16 +1,41 @@
-# GoBootX 🚀
+# GoBootX 🚀 
 
-> TUI interactiva para la creación automática de arquitecturas de desarrollo de software en Go.
+<div align="center">
+  <img src="img/logo.svg" alt="GoBootX Logo" width="180">
+</div>
+
+
+> TUI interactiva para la creación automática de arquitecturas de desarrollo de software.
 
 ![GoBootX Demo](img/terminal.png)
 
-**GoBootX** es una herramienta de línea de comandos (CLI) con interfaz gráfica de terminal (TUI) diseñada para acelerar el inicio de nuevos proyectos. Permite generar automáticamente la estructura de carpetas y archivos base siguiendo los principios de **Clean Architecture**.
+**GoBootX** es una herramienta de línea de comandos (CLI) con interfaz gráfica de terminal (TUI) diseñada para acelerar el inicio de nuevos proyectos. Permite generar automáticamente la estructura de carpetas, archivos base y configuración de Docker siguiendo patrones de diseño estándar.
 
 ## ✨ Características
 
 - **Interfaz Interactiva**: Navegación sencilla y estilizada gracias a [Bubble Tea](https://github.com/charmbracelet/bubbletea).
-- **Clean Architecture**: Genera estructuras de proyecto robustas, escalables y estandarizadas listas para empezar a codificar.
+- **Multi-Arquitectura**: Soporte para generar estructuras de **Clean Architecture** y **MVC**.
+- **Soporte Docker**: Generación automática de `Dockerfile` optimizado según el lenguaje seleccionado.
+- **Multi-Lenguaje**: Configuración adaptada para proyectos en **Go** y **Python** (FastAPI).
 - **Rápido y Eficiente**: Scaffolding instantáneo para tus nuevos microservicios o aplicaciones.
+
+## 🏗️ Arquitecturas Soportadas
+
+### 1. Clean Architecture
+Estructura robusta y escalable ideal para microservicios y aplicaciones empresariales.
+- `src/domain`
+- `src/use_case`
+- `src/repository`
+- `src/infrastructure`
+- `src/api`
+- `src/config`
+
+### 2. MVC (Model-View-Controller)
+Estructura clásica para aplicaciones web y prototipos rápidos.
+- `src/model`
+- `src/view`
+- `src/controller`
+- `src/config`
 
 ## 📦 Instalación
 
@@ -47,25 +72,10 @@ Navega al directorio donde quieres crear tu proyecto y ejecuta:
 gobootx
 ```
 
-Verás un menú interactivo:
-
-1. Ingresa **"1"** y presiona Enter para generar la estructura de Clean Architecture.
-2. Ingresa **"q"** o presiona `Esc` / `Ctrl+C` para salir.
-
-### Estructura Generada (Ejemplo)
-
-La herramienta creará una estructura similar a esta:
-
-```text
-.
-├── cmd/
-├── internal/
-│   ├── domain/
-│   ├── usecase/
-│   └── infrastructure/
-├── pkg/
-└── ...
-```
+Verás un menú interactivo donde podrás seleccionar:
+1. La arquitectura deseada.
+2. Si deseas incluir configuración de Docker.
+3. El lenguaje del proyecto (Go o Python).
 
 ## 🛠️ Tecnologías
 
