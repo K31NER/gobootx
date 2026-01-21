@@ -59,7 +59,7 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
     
-	// Captuamos el tipo de mensaje
+	// Capturamos el tipo de mensaje
 	switch msg := msg.(type) {
 
 	case tea.WindowSizeMsg:
@@ -144,15 +144,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // Iniciamos la TUI
 func (m Model) View() string {
-
-	// Definimos el logo
-	title := `
-     ██████╗  ██████╗ ██████╗  ██████╗  ██████╗ ████████╗██╗  ██╗
-    ██╔════╝ ██╔═══██╗██╔══██╗██╔═══██╗██╔═══██╗╚══██╔══╝╚██╗██╔╝
-    ██║  ███╗██║   ██║██████╔╝██║   ██║██║   ██║   ██║    ╚███╔╝ 
-    ██║   ██║██║   ██║██╔══██╗██║   ██║██║   ██║   ██║    ██╔██╗ 
-    ╚██████╔╝╚██████╔╝██████╔╝╚██████╔╝╚██████╔╝   ██║   ██╔╝ ██╗
-     ╚═════╝  ╚═════╝ ╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝`
     
 	// Estilos 
 	style := lipgloss.NewStyle().
@@ -221,5 +212,5 @@ func (m Model) View() string {
 	}
 
 	// Renderizamos la terminal con los estilos
-	return style.Render(title) + "\n" + dirStyle.Render("Path: "+currentDir) + "\n" + content + "\n\n" + m.textInput.View()
+	return style.Render(Title) + "\n" + dirStyle.Render("Path: "+currentDir) + "\n" + content + "\n\n" + m.textInput.View()
 }
